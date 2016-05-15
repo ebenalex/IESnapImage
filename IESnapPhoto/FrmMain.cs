@@ -41,7 +41,7 @@ namespace IESnapPhoto
         {
             if (e.Url.ToString().IndexOf("login") != -1)
             {
-                wbIE.Document.GetElementById("_txtUserId").SetAttribute("value", "dschang");
+                wbIE.Document.GetElementById("_txtUserId").SetAttribute("value", "");
                 wbIE.Document.GetElementById("_txtPassword").SetAttribute("value", "");
                 wbIE.Document.GetElementById("_btnLogin").InvokeMember("click");
             }
