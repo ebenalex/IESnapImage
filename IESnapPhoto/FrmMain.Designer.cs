@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.wbIE = new System.Windows.Forms.WebBrowser();
+            this.timGetFormPicture = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // wbIE
@@ -43,6 +45,12 @@
             this.wbIE.TabIndex = 0;
             this.wbIE.Url = new System.Uri("http://10.151.65.113", System.UriKind.Absolute);
             this.wbIE.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wbIE_DocumentCompleted);
+            // 
+            // timGetFormPicture
+            // 
+            this.timGetFormPicture.Enabled = true;
+            this.timGetFormPicture.Interval = 100000;
+            this.timGetFormPicture.Tick += new System.EventHandler(this.timGetFormPicture_Tick);
             // 
             // FrmMain
             // 
@@ -60,6 +68,7 @@
         #endregion
 
         private System.Windows.Forms.WebBrowser wbIE;
+        private System.Windows.Forms.Timer timGetFormPicture;
     }
 }
 
