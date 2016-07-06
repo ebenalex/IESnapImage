@@ -167,7 +167,7 @@ namespace IESnapPhoto
                     }
 
                     //将准备好数据插入至发邮件的队列
-                    commandStr = "insert into BPMSysMessagesQueue([ProviderName],[Address],[Title] ,[Message] ,[CreateAt],[LastSendAt] ,[FailCount],[Attachments])  Select '"+ provider+"',[Address] ,[Title] ,[Message] ,[CreateAt] ,[LastSendAt],[FailCount] ,Attachments] from BPMSysMessagesQueuePrepare where MessageID= " + reader["MessageID"].ToString() ;
+                    commandStr = "insert into BPMSysMessagesQueue([ProviderName],[Address],[Title] ,[Message] ,[CreateAt],[LastSendAt] ,[FailCount],[Attachments])  Select '"+ provider+"',[Address] ,[Title] ,[Message] ,[CreateAt] ,[LastSendAt],[FailCount] ,[Attachments] from BPMSysMessagesQueuePrepare where MessageID= " + reader["MessageID"].ToString() ;
 
                     SqlCommand cmd1 = new SqlCommand(commandStr, sqlconn1);
                     cmd1.ExecuteNonQuery();
