@@ -156,10 +156,13 @@ namespace IESnapPhoto
 
                         if (!powerUsers.Contains(ownerAccount.ToLower()))
                         {
-                            //删除邮件审批的内容
+                            //若不是高级领导则删除邮件审批的内容
+                            commandStr = "Udpate set [Message] = case when CHARINDEX ('邮件审批',[Message] ,0)>0 then substring([Message],0,CHARINDEX ('邮件审批',[Message] ,0)) else [message] end  where MessageID= " + reader["MessageID"].ToString();
+                            SqlCommand cmd4 = new SqlCommand(commandStr, sqlconn1);
+                            cmd.ExecuteNonQuery();
                         }
 
-                            #endregion
+                        #endregion
 
                         if (!limitedProcess.Contains(lsCode.Substring(0, 4)))
                         {
