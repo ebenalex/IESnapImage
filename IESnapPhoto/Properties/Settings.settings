@@ -1,7 +1,36 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="IESnapPhoto.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PowserUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">xjjiang;dschang</Value>
+    </Setting>
+    <Setting Name="ProcessLimited" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ServerName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">RCA064</Value>
+    </Setting>
+    <Setting Name="DefaultURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://10.151.65.64/bpm</Value>
+    </Setting>
+    <Setting Name="IPAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.64</Value>
+    </Setting>
+    <Setting Name="TempDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\temp\</Value>
+    </Setting>
+    <Setting Name="ServerTempDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\rca064\c$\temp\</Value>
+    </Setting>
+    <Setting Name="UserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SystemNormalUser</Value>
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Call3248</Value>
+    </Setting>
+    <Setting Name="ConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Server=rca064;Database=BPMDB;User ID=sa;Password=Call3248;Trusted_Connection=False</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
