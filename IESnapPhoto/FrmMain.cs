@@ -110,6 +110,7 @@ namespace IESnapPhoto
                 //遍历数据库发邮件的准备表
                 SqlCommand cmd = new SqlCommand("SELECT * FROM BPMSysMessagesQueuePrepare", sqlconn);
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                
                 DataSet ds = new DataSet();
                 adapter.Fill(ds);
 
