@@ -49,7 +49,7 @@
             // timGetFormPicture
             // 
             this.timGetFormPicture.Enabled = true;
-            this.timGetFormPicture.Interval = 60000;
+            this.timGetFormPicture.Interval = 10000;
             this.timGetFormPicture.Tick += new System.EventHandler(this.timGetFormPicture_Tick);
             // 
             // FrmMain

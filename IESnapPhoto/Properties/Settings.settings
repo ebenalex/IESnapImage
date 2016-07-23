@@ -17,11 +17,8 @@
     <Setting Name="IPAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)">.64</Value>
     </Setting>
-    <Setting Name="TempDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)">c:\temp\</Value>
-    </Setting>
     <Setting Name="ServerTempDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)">\\rca064\c$\temp\</Value>
+      <Value Profile="(Default)">d:\temp1\</Value>
     </Setting>
     <Setting Name="UserName" Type="System.String" Scope="User">
       <Value Profile="(Default)">SystemNormalUser</Value>
@@ -30,7 +27,10 @@
       <Value Profile="(Default)">Call3248</Value>
     </Setting>
     <Setting Name="ConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Server=rca064;Database=BPMDB;User ID=sa;Password=Call3248;Trusted_Connection=False</Value>
+      <Value Profile="(Default)">Server=10.151.65.64;Database=BPMDB;User ID=sa;Password=Call3248;Trusted_Connection=False</Value>
+    </Setting>
+    <Setting Name="TempDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">d:\temp\</Value>
     </Setting>
   </Settings>
 </SettingsFile>

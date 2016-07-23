@@ -85,19 +85,7 @@ namespace IESnapPhoto.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("c:\\temp\\")]
-        public string TempDirectory {
-            get {
-                return ((string)(this["TempDirectory"]));
-            }
-            set {
-                this["TempDirectory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\\\\rca064\\c$\\temp\\")]
+        [global::System.Configuration.DefaultSettingValueAttribute("d:\\temp1\\")]
         public string ServerTempDirectory {
             get {
                 return ((string)(this["ServerTempDirectory"]));
@@ -133,14 +121,26 @@ namespace IESnapPhoto.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Server=rca064;Database=BPMDB;User ID=sa;Password=Call3248;Trusted_Connection=Fals" +
-            "e")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=10.151.65.64;Database=BPMDB;User ID=sa;Password=Call3248;Trusted_Connectio" +
+            "n=False")]
         public string ConnectionString {
             get {
                 return ((string)(this["ConnectionString"]));
             }
             set {
                 this["ConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("d:\\temp\\")]
+        public string TempDirectory {
+            get {
+                return ((string)(this["TempDirectory"]));
+            }
+            set {
+                this["TempDirectory"] = value;
             }
         }
     }

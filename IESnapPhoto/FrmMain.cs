@@ -61,17 +61,16 @@ namespace IESnapPhoto
         private string ServerTempDirectory = Properties.Settings.Default.ServerTempDirectory;
         private string connectionString = Properties.Settings.Default.ConnectionString;
 
+
         private void timGetFormPicture_Tick(object sender, EventArgs e)
         {
 
             timGetFormPicture.Enabled = false;
-
+            //连接数据库后将截图插入至附件字段
+            SqlConnection sqlconn = new SqlConnection();
+            sqlconn.ConnectionString = connectionString;
             try
             {
-
-                //连接数据库后将截图插入至附件字段
-                SqlConnection sqlconn = new SqlConnection();
-                sqlconn.ConnectionString = connectionString;
 
                 #region Variable 
                 //审批流水号
@@ -85,7 +84,7 @@ namespace IESnapPhoto
 
                 int startPos = 0;
                 int endPos = 0;
-                
+
                 //邮件的处理方式
                 string provider = "EVLMail";
 
@@ -105,70 +104,72 @@ namespace IESnapPhoto
 
                 //循环处理时，当处理完成一条，则将此条写入邮件序列中
                 //限制使用的帐户列表以及限制不使用此流程的列表
-                using (sqlconn)
+
+                sqlconn.Open();
+
+                //遍历数据库发邮件的准备表
+                SqlCommand cmd = new SqlCommand("SELECT * FROM BPMSysMessagesQueuePrepare", sqlconn);
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds);
+
+                //SqlDataReader reader = cmd.ExecuteReader();
+                foreach (DataRow reader in ds.Tables[0].Rows)
                 {
-                    sqlconn.Open();
 
-                    //遍历数据库发邮件的准备表
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM BPMSysMessagesQueuePrepare", sqlconn);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    DataSet ds = new DataSet();
-                    adapter.Fill(ds);
-                    //SqlDataReader reader = cmd.ExecuteReader();
-                    foreach (DataRow reader in ds.Tables[0].Rows)
+                    #region 根据邮件的内容进行分析读取相关变量的内容
+                    //获取审批流水号
+                    title = reader["Title"].ToString();
+                    lsCode = title.Substring(title.LastIndexOf('：') + 1, title.Length - title.LastIndexOf('：') - 1);
+                    if (title.IndexOf("新任务") > -1)
                     {
+                        #region 更新变量
+                        //获取快速审批路径
+                        message = reader["Message"].ToString();
+                        startPos = message.IndexOf(fKeyString);
+                        startPos += fKeyString.Length;
 
-                        #region 根据邮件的内容进行分析读取相关变量的内容
-                        //获取审批流水号
-                        title = reader["Title"].ToString();
-                        lsCode = title.Substring(title.LastIndexOf('：') + 1, title.Length - title.LastIndexOf('：') - 1);
-                        if (title.IndexOf("新任务") > -1)
+                        endPos = message.IndexOf(eKeyString, startPos);
+
+                        processURL = message.Substring(startPos, endPos - startPos);
+                        processURL = processURL.Replace(".113", ipAddress);
+                        startPos = processURL.IndexOf(ftaskKey) + ftaskKey.Length;
+                        endPos = processURL.IndexOf(etaskKey, startPos);
+                        taskID = processURL.Substring(startPos, endPos - startPos);
+
+                        startPos = processURL.IndexOf(pStepKey) + pStepKey.Length;
+                        endPos = processURL.Length;
+                        processStepID = processURL.Substring(startPos + 1, endPos - startPos - 1);
+                        #endregion
+                        ownerAccount = readOwnerAccount(sqlconn, taskID, processStepID);
+
+                        processMesageEmailReply(sqlconn, powerUsers, ownerAccount, reader["MessageID"].ToString(), message);
+
+
+
+                        if (!limitedProcess.Contains(lsCode.Substring(0, 4)))
                         {
-                            //获取快速审批路径
-                            message = reader["Message"].ToString();
-                            startPos = message.IndexOf(fKeyString);
-                            startPos += fKeyString.Length;
 
-                            endPos = message.IndexOf(eKeyString, startPos);
 
-                            processURL = message.Substring(startPos, endPos - startPos);
-                            processURL = processURL.Replace(".113", ipAddress);
-                            startPos = processURL.IndexOf(ftaskKey) + ftaskKey.Length;
-                            endPos = processURL.IndexOf(etaskKey, startPos);
-                            taskID = processURL.Substring(startPos, endPos - startPos);
-
-                            startPos = processURL.IndexOf(pStepKey) + pStepKey.Length;
-                            endPos = processURL.Length;
-                            processStepID = processURL.Substring(startPos + 1, endPos - startPos - 1);
-
-                            ownerAccount = readOwnerAccount(sqlconn, taskID, processStepID);
-
-                            processMesageEmailReply(sqlconn, powerUsers, ownerAccount, reader["MessageID"].ToString(), message);
-
-                            #endregion
-
-                            if (!limitedProcess.Contains(lsCode.Substring(0, 4)))
+                            #region 生成文件并同时发送文件
+                            if (powerUsers.Contains(ownerAccount.ToLower()))
                             {
+                                EVFile.FileInfo fi;
+                                fi = snapPictureSendMail(sqlconn, processURL, taskID, processStepID, ownerAccount, reader);
 
+                                copyFiles(fi);
 
-                                #region 生成文件并同时发送文件
-                                if (powerUsers.Contains(ownerAccount.ToLower()))
-                                {
-                                    EVFile.FileInfo fi;
-                                    fi = snapPictureSendMail(sqlconn, processURL, taskID, processStepID, ownerAccount, reader);
-
-                                    copyFiles(fi);
-
-                                }
-                                #endregion
                             }
+                            #endregion
                         }
-
-                        updateSendMail(sqlconn, provider, reader);
                     }
+                    #endregion
 
-
+                    updateSendMail(sqlconn, provider, reader);
                 }
+
+
+
 
 
             }
@@ -179,6 +180,10 @@ namespace IESnapPhoto
             }
             finally
             {
+                if (sqlconn.State == ConnectionState.Open)
+                {
+                    sqlconn.Close();
+                }
                 this.wbIE.Url = new Uri(DefaultUrl);
                 Task.Delay(10000);
 
@@ -260,13 +265,13 @@ namespace IESnapPhoto
         private void copyFiles(EVFile.FileInfo fi)
         {
             string copyString = "copy " + fi.Filepath + " " + ServerTempDirectory + fi.Filename + " /Y";
-            if(System.IO.File.Exists(fi.Filepath))
+            if (System.IO.File.Exists(fi.Filepath))
             {
                 System.Diagnostics.Process p = new System.Diagnostics.Process();
                 p.StartInfo = new System.Diagnostics.ProcessStartInfo("cmd.exe", " /C " + copyString);
                 p.Start();
             }
-            
+
         }
 
         private static string readOwnerAccount(SqlConnection sqlconn, string taskID, string processStepID)
@@ -287,10 +292,10 @@ namespace IESnapPhoto
         /// <param name="powerUsers">Power User List</param>
         /// <param name="ownerAccount">My User Account</param>
         /// <param name="reader"></param>
-        private static void processMesageEmailReply(SqlConnection sqlconn, string[] powerUsers, string ownerAccount, string messageID,string message)
+        private static void processMesageEmailReply(SqlConnection sqlconn, string[] powerUsers, string ownerAccount, string messageID, string message)
         {
             string mailKey = "邮件审批：";
-            if (!powerUsers.Contains(ownerAccount.ToLower()) && message.IndexOf(mailKey)> -1)
+            if (!powerUsers.Contains(ownerAccount.ToLower()) && message.IndexOf(mailKey) > -1)
             {
                 //若不是高级领导则删除邮件审批的内容
                 string commandStr = "Update  BPMSysMessagesQueuePrepare  set [Message] = case when CHARINDEX ('" + mailKey + "',[Message] ,0)>0 then substring([Message],0,CHARINDEX ('" + mailKey + "',[Message] ,0)) else [message] end  where MessageID= " + messageID;
@@ -301,10 +306,10 @@ namespace IESnapPhoto
 
         private static void writeSystemEventErr(Exception ee)
         {
-            StreamWriter sw  = File.AppendText("Log.txt");
+            StreamWriter sw = File.AppendText("Log.txt");
             sw.WriteLine(System.DateTime.Now.ToString() + " : " + ee.ToString());
             sw.Close();
-            
+
             //if (!EventLog.SourceExists("IESnapPhoto"))
             //{
             //    EventLog.CreateEventSource("IESnapPhoto", "BPMSnapPhoto");
